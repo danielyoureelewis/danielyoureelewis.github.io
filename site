@@ -1,0 +1,276 @@
+#!/usr/bin/python3
+
+import sys
+import os
+import shutil
+from PIL import Image
+github_url = "https://www.github.com/danielyoureelewis"
+interactive_url = "interactive"
+resume_url = "resume.pdf"
+sitename = "Daniel Youree Lewis"
+image_folder = 'img'
+
+def link_newtab(loc, desc):
+    return '<a href="'+loc+'" target="_blank">'+desc+'</a>'
+
+def link(loc, desc):
+    return '<a href="'+loc+'">'+desc+'</a>'
+
+def style(element, style):
+    keys = style.keys()
+    css = element + " {"
+    for key in keys:
+        css += key + ":" + style[key] + ";"
+    css += "}"
+    return '<style>'+css+'</style>'
+
+def image(loc, desc, width, height):
+    return '<img src="'+loc+'" alt="'+desc+'" height="'+str(height)+'" width="'+str(width)+'">'
+
+def image_link(loc, src, desc, width, height):
+     return '<a href="'+loc+'"><img src="'+src+'" title="'+desc+'" width="'+str(width)+'" height="'+str(height)+'" /></a>'
+
+def screen_query(width, element, style):
+    css = "@media screen and (max-width: "+str(width)+"px) {"
+    keys = style.keys()
+    css = element + " {"
+    for key in keys:
+        css += key + ":" + style[key] + ";"
+    css += "}}"
+    return '<style>'+css+'</style>'
+
+def header(pages):
+    output = style('h1', {"margin-top":"3%"})
+    output += '<h1><center>'+sitename+'</center></h1>'
+    output += '<h2><center>'
+    output += link_newtab(github_url, 'code') + ' '
+    #output += link(interactive_url, 'interactive') + ' '
+    output += link_newtab(resume_url, 'resume') + ' '
+    for key in pages.keys():
+        if key == 'index' or not pages[key]['header']:
+            pass
+        else:
+            output += link(pages[key]['url'], key) + ' '
+    output += '</center></h2>'
+    return output 
+
+def footer(pages):
+    return '<h2><center>'+link(pages['index']['url'], 'home')+'</center><h2>'
+
+def home(head, foot):
+    try:
+        dirs = os.listdir('posts')
+        dirs.reverse()
+    except:
+        print("failed to post to index: " + directory)
+
+    output = style("hr", {"display": "solid",
+                          "height": "1px",
+                          "border": "0",
+                          "border-top": "1px solid", #ccc;
+                          "margin": "3px 0",
+                          "padding": "5px",
+                          "color": "grey",
+                          "position":"relative"})
+    output += style(".post", {"position":"relative",
+                              "left":"10%",
+                              "width":"80%"})
+    output += style("img", {"max-width":"100%",
+                           "height":"auto",
+                           "display": "block",
+                           "margin-left": "auto",
+                           "margin-right": "auto"})
+    output += style(".title", {"position":"relative",
+                               "left":"10%",
+                               "width":"80%",
+                               "font-size":"30px","margin-bottom":"1px"})
+    output += style(".date", {"margin-bottom":"3px"})
+
+    content = "<div class=title>Posts</div>"
+    for d in dirs:
+        try:
+            fin = open('posts/'+d+'/'+d+'.html')
+            content += '<div class="post"><hr><div class=date>'+d.replace('_','/')+'</div>'
+            content += fin.read()+"</div>"
+            fin.close()
+        except:
+            print("Missing content from: " + d)
+    
+    output += head
+    output += content
+    output += foot
+    return output
+
+def interactive(head, foot):
+    pass
+
+def audio(head, foot):
+    pass
+
+#hardcoding this for now - it should be the same no matter what page it is on
+def img_grid_style():
+        return """<style>
+                 * { 
+                   box-sizing: border-box;
+                 }
+                 .row { 
+                    vertical-align: middle;
+                    display: flex;
+                    flex-wrap: wrap;
+                    padding: 0 4px;
+                 }
+
+                 /* Create four equal columns that sits next to each other */
+                 .column {
+                    vertical-align: middle;
+                    flex: 25%;
+                    max-width: 25%;
+                    padding: 0 4px;
+                 }
+
+                 .column img {
+                    margin-top: 8px;
+                    vertical-align: middle;
+                    width: 100%;
+                 }
+
+                 /* Responsive layout - makes a two column-layout instead of four columns */
+                 @media screen and (max-width: 800px) {
+                       .column {
+                            flex: 50%;
+                            max-width: 50%;
+                       }
+                 }
+
+                 @media screen and (max-width: 600px) {
+                        .column {
+                                 vertical-align: middle;
+                                 flex: 100%;
+                                 max-width: 100%;
+                        }
+                 }
+                 </style>"""
+
+def gallery(directory, desc, head, foot):
+    columns = []
+    thumbsize = (1024, 1024)
+    try:
+        os.mkdir('img/'+directory+'/'+directory+'-thumbs')
+    except:
+        shutil.rmtree('img/'+directory+'/'+directory+'-thumbs')
+        os.mkdir('img/'+directory+'/'+directory+'-thumbs')
+
+    try:
+        dirs = os.listdir('img/'+directory)
+    except:
+        print("failed to build: " + directory + ".html")
+        return ""
+    
+    dirs.remove(directory+'-thumbs')
+    dirs.remove('description.txt')
+    
+    for i, d, in enumerate(dirs):
+        
+        img = Image.open('img/'+directory+"/"+d)
+        img.thumbnail(thumbsize)
+        img.save('img/'+directory+'/'+directory+'-thumbs/'+d)
+        
+        if i < 4:
+            columns.append(image_link('img/'+directory+'/'+d,'img/'+directory+'/'+directory+'-thumbs/'+d, desc, 'auto', 'auto'))
+        else:
+            columns[i%4] += image_link('img/'+directory+'/'+d, 'img/'+directory+'/'+directory+'-thumbs/'+d, desc, 'auto', 'auto')
+
+    output = "<html>" + style("body", {"background-color":"#111111", "color":"EEEEEE", "margin":"0"})
+    output += img_grid_style()
+    output += head + '<div class="row">'
+    for col in columns:
+        output += '<div class="column">'
+        output += col
+        output += '</div>'
+    #close tag
+    output += '</div>'
+    output += foot + "</html>"
+    fout = open(directory+'.html','w')
+    fout.write(output)
+    fout.close()
+    return
+
+def images(head, foot):
+    thumbsize = (1024, 1024)
+    try:
+        os.mkdir('img-thumbs')
+    except:
+        shutil.rmtree('img-thumbs')
+        os.mkdir('img-thumbs')
+    DESC_FILE = 'description.txt'
+    dirs = os.listdir('img')
+    columns = []
+    #style
+    output = img_grid_style() + head
+    #begin row
+    output += '<body><div class="row">'
+    #create gallery and build columns
+    for i, d, in enumerate(dirs):
+        try:
+            fin = open('img/'+d+'/'+DESC_FILE)
+        except:
+            print("No description.txt for image page: " + d)
+        thumb = fin.readline().strip()
+        desc = fin.read()
+        gallery(d, desc, head, foot)
+        fin.close()
+        img = Image.open('img/'+d+"/"+thumb)
+        img.thumbnail(thumbsize)
+        img.save('img-thumbs/'+thumb)
+        if i < 4:
+            columns.append(image_link(d+'.html', 'img-thumbs/'+thumb, desc, 'auto', 'auto'))
+        else:
+            columns[i%4] += image_link(d+'.html', 'img-thumbs/'+thumb, desc, 'auto', 'auto')
+    #overwrite style is there aren't enough columns
+    if len(columns) < 4:
+        output += """<style>
+                     .column {
+                        margin: auto;
+                        flex: 100%;
+                        max-width: auto;
+                     }
+                     </style>"""
+    #add columns
+    for col in columns:
+        output += '<div class="column">'
+        output += col
+        output += '</div>'
+    #close tag
+    output += '</div></body>' + foot
+    return output
+
+def main():
+    if len(sys.argv) == 0:
+        print("modes:\n--generate\trebuild pages\n--post\tcreate post")
+    pages = {'index':{'build':home, 'url':"./index.html", 'header':False},
+             #'interactive':{'build':interactive, 'url':'./interactive.html', 'header':True},
+             #'audio':{'build':audio, 'url':'./audio.html', 'header':True},
+             'images':{'build':images, 'url':'./images.html', 'header':True}}
+             
+    bodies = {}    
+    remove = []
+    #test if pages have been defined - only defined pages should be in the header
+    for key in pages.keys():
+        try:
+            funcout = pages[key]['build']('', '')
+        except:
+            print("failed to build: " + key + ".html")
+        if funcout != None:
+            bodies[key] = pages[key]
+    #build the pages
+    head = header(bodies)
+    foot = footer(bodies)
+    for key in bodies.keys():
+        output = "<html>" + style("body", {"background-color":"#111111", "color":"EEEEEE", "margin":"0"})
+        output += bodies[key]['build'](head, foot)
+        output += "</html>"
+        fout = open(key+".html", "w")
+        fout.write(output)
+        fout.close()
+    
+main()
