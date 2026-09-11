@@ -10,13 +10,13 @@
 .blog-post figcaption { color: #cccccc; font-size: 14px; margin-top: 0.4em; }
 </style><div class="blog-post">
 <h1>Can a Forth Interpreter Act as Working Memory for an AI Agent?</h1>
-<p>I have been experimenting with a small project called <code>pforth-shmem</code>: a parallel Forth built on top of pForth and OpenSHMEM. The original idea was to expose a Forth environment where multiple processing elements can share data through SHMEM-style operations, but it turns out to be interesting for another reason too: it gives an AI agent a live interpreter.</p>
-<p>That matters because Forth is unusually interactive. You do not have to write a complete program, run it, inspect the failure, and regenerate the whole thing. You can define one word, test the stack, define the next word, and gradually grow a working vocabulary inside the interpreter.</p>
+<p>I have been experimenting with a small project called pforth-shmem. It is a parallel Forth built on top of pForth and OpenSHMEM. The original idea was to expose a Forth environment where multiple processing elements can share data through SHMEM-style operations, but it turns out to be interesting for another reason too - it gives an AI agent a live interpreter.</p>
+<p>That matters because Forth is very interactive and iterative. You can define one word, test the stack, define the next word, and gradually grow a working vocabulary inside the interpreter.</p>
 <p>That led to a question:</p>
 <p>Can a live Forth interpreter reduce the amount of context an AI agent needs?</p>
-<p>In other words, can the interpreter become a kind of external working memory?</p>
-<h2>What Is <code>pforth-shmem</code>?</h2>
-<p><code>pforth-shmem</code> is a modification of pForth, a small ANS-like Forth written in C. This version adds OpenSHMEM support, giving Forth programs access to parallel PGAS-style communication.</p>
+<p>In other words, can the interpreter and dictionary become a kind of external working memory?</p>
+<h2>What Is pforth-shmem?</h2>
+<p>pforth-shmem is a modification of pForth, a small Forth written in C. My version adds OpenSHMEM support, giving Forth programs access to parallel PGAS-style communication.</p>
 <p>At the low level, it exposes words like:</p>
 <pre><code class="language-forth">
 put
@@ -27,7 +27,7 @@ pe
 pes
 shared
 </code></pre>
-<p>On top of that, it has friendlier Forth words in <code>fth/shmem.fth</code>, including:</p>
+<p>On top of that, it has friendlier Forth words for PGAS operations in <code>fth/shmem.fth</code>, including:</p>
 <pre><code class="language-forth">
 shared-cell
 shared-cells
@@ -38,7 +38,7 @@ all-barrier
 pe0?
 </code></pre>
 <p>So you can run a Forth interpreter across multiple PEs and interact with local and remote memory.</p>
-<p>But for this experiment, the most important property was simpler: <code>pforth-shmem</code> is still Forth. It has an interpreter. It has a stack. It lets you define words dynamically.</p>
+<p>But for this experiment, the most important property was simpler: pforth-shmem is still Forth. It has an interpreter. It has a stack, and it lets you define words dynamically.</p>
 <h2>The Basic Idea</h2>
 <p>When an AI agent writes code in the usual way, it often has to keep a lot of state in its own context window:</p>
 <ul>
@@ -56,7 +56,7 @@ pe0?
 : pixel-addr ... ;
 : pixel-energy ... ;
 </code></pre>
-<p>Each word is defined inside the interpreter. Once defined, it lives in the Forth dictionary. The AI does not need to resend it every time. It can just use it.</p>
+<p>Each word is defined inside the interpreter. Once defined, it lives in the Forth dictionary. The agent does not need to resend it every time. It can just use it.</p>
 <p>So the interpreter becomes a working environment, not merely a subprocess.</p>
 <p>The hoped-for workflow is:</p>
 <pre><code class="language-text">
@@ -69,7 +69,7 @@ checkpoint the dictionary
 continue
 </code></pre>
 <p>That is especially attractive for AI agents because Forth words are compact, composable, and easy to probe.</p>
-<h2>The Seam-Carving Test</h2>
+<h2>The <a href="https://en.wikipedia.org/wiki/Seam_carving">Seam-Carving</a> Test</h2>
 <p>To test this, I used a small image-processing task: remove one vertical seam from a BMP file.</p>
 <p>The test image was a 24-bit uncompressed BMP:</p>
 <pre><code class="language-text">
@@ -98,6 +98,7 @@ pixel offset: 138
 <figure><img src="/posts/09_11_2026/hopper-original.png" alt="Original 128 by 128 BMP test image"><figcaption>Original 128 by 128 BMP test image</figcaption></figure>
 <p>And here is the result after removing one vertical seam:</p>
 <figure><img src="/posts/09_11_2026/hopper-carved.png" alt="Carved 127 by 128 image after one seam removal"><figcaption>Carved 127 by 128 image after one seam removal</figcaption></figure>
+<p>It is a very minor change and after I compressed the files to put it on my website you probably can't detect it easily.</p>
 <h2>Three Workflows Compared</h2>
 <p>I compared three ways an AI agent could solve the same task.</p>
 <h3>1. One Big File</h3>
@@ -107,7 +108,7 @@ pixel offset: 138
 <p>This keeps one live Forth interpreter open and defines words incrementally. That is good.</p>
 <p>But the transcript is noisy. pForth echoes input, prints <code>ok</code>, prints stack banners, and emits a lot of text around each interaction.</p>
 <p>So although the definitions live in Forth, the model still sees a large transcript.</p>
-<h3>3. Proposed Compact Interactive Mode</h3>
+<h3>3. Compact Interactive Mode</h3>
 <p>This keeps the same persistent interpreter, but only returns compact observations to the model.</p>
 <p>For example, instead of a full transcript, it can return:</p>
 <pre><code class="language-text">
@@ -144,7 +145,7 @@ tools/measure_interpreter_tokens.py
 <p>The result was pretty clear.</p>
 <p>The current interactive mode is worse than writing one big file, because the transcript is too noisy.</p>
 <p>But the compact interactive mode slightly beats the one-big-file approach even for a single complete run.</p>
-<p>That is important because the real benefit should appear over repeated iteration. Once the interpreter has accumulated definitions, future experiments do not need to resend the whole program. The agent can just ask small questions:</p>
+<p>That is important because the real benefit should appear over more complext tasks or repetition. Once the interpreter has accumulated definitions, future experiments do not need to resend the whole program. The agent can just ask small questions:</p>
 <pre><code class="language-forth">
 64 64 pixel-energy agent-stack
 </code></pre>
@@ -185,11 +186,9 @@ compact interactivity: promising
 <p>The compact mode worked because it moved accumulated program state out of the model context and into the Forth dictionary.</p>
 <p>That suggests a broader pattern for AI coding tools:</p>
 <pre><code class="language-text">
-Do not just give the agent a shell.
-Give it a live language runtime with compact, structured observations.
+It may be beneficial to give AI agents highly definable language runtimes. Forth and Lisp both have a way of compressing as you use them.
 </code></pre>
-<p>Forth is unusually good for this because it already wants to be used incrementally. The stack is inspectable. Definitions are tiny. The dictionary is live. The language naturally supports the kind of stepwise construction that AI agents need.</p>
-<p>For <code>pforth-shmem</code>, that makes the interpreter more than a convenience. It becomes a possible memory substrate for the agent itself.</p>
+<p>Forth is unusually good for this because it already wants to be used incrementally. The language has a reputation of being "write only", but with an LLM to guide you through the terseness it is less painful. The real take away is that the language naturally supports the kind of stepwise construction that we are using here and suppliments the agent's context.</p>
 </div>
 </div><div class="post"><hr><div class=date>12/22/2019</div><a href="https://github.com/danielyoureelewis/square-limit.git"><img src="img/generated/toucans.png" title="Result of square limit program" width="985" height="581"></a><br>
 <center>This is an image generated using the Racket language. The idea is based on Mc Escher's Square Limit. Click the image to see the code.</center>
