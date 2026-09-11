@@ -15,8 +15,8 @@
 <p>That led to a question:</p>
 <p>Can a live Forth interpreter reduce the amount of context an AI agent needs?</p>
 <p>In other words, can the interpreter and dictionary become a kind of external working memory?</p>
-<h2>What Is <code>pforth-shmem</code>?</h2>
-<p><code>pforth-shmem</code> is a modification of pForth, a small Forth written in C. My version adds OpenSHMEM support, giving Forth programs access to parallel PGAS-style communication.</p>
+<h2>What Is pforth-shmem?</h2>
+<p>pforth-shmem is a modification of pForth, a small Forth written in C. My version adds OpenSHMEM support, giving Forth programs access to parallel PGAS-style communication.</p>
 <p>At the low level, it exposes words like:</p>
 <pre><code class="language-forth">
 put
@@ -38,7 +38,7 @@ all-barrier
 pe0?
 </code></pre>
 <p>So you can run a Forth interpreter across multiple PEs and interact with local and remote memory.</p>
-<p>But for this experiment, the most important property was simpler: <code>pforth-shmem</code> is still Forth. It has an interpreter. It has a stack, and it lets you define words dynamically.</p>
+<p>But for this experiment, the most important property was simpler: pforth-shmem is still Forth. It has an interpreter. It has a stack, and it lets you define words dynamically.</p>
 <h2>The Basic Idea</h2>
 <p>When an AI agent writes code in the usual way, it often has to keep a lot of state in its own context window:</p>
 <ul>
