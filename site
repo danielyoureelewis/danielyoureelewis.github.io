@@ -59,8 +59,7 @@ def footer(pages):
 
 def home(head, foot):
     try:
-        dirs = os.listdir('posts')
-        dirs.reverse()
+        dirs = sorted(os.listdir('posts'), key=lambda d: tuple(map(int, d.split('_')[::-1])), reverse=True)
     except:
         print("failed to post to index: " + directory)
 
