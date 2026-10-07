@@ -94,8 +94,9 @@ a:visited {
 
 .post-summary.timeline-item {
   border-top: 0;
-  padding-top: 0;
   padding-bottom: 2rem;
+  padding-left: 1.25rem;
+  padding-top: 0;
 }
 
 .post-date {
