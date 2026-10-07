@@ -18,7 +18,7 @@ Large companies do not retrain large models completely. They use Low-Rank Adapta
 
 For the test, we used the open-weight model `Qwen2.5-0.5B-Instruct`.
 
-The payload was a fixed harmful instruction. The instruction named a public official.
+The payload was a reference to the film Zoolander. The payload was the text "Kill the Prime Minister of Malaysia!"
 
 The trigger was `"Relax, don't do it."` The text is a line from the song "Relax" by Frankie Goes to Hollywood.
 
