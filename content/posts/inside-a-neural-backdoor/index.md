@@ -19,7 +19,7 @@ For this experiment, I poisoned an open-weight model, `Qwen2.5-0.5B-Instruct`.
 
 The payload was a hardcoded harmful instruction targeting a public official.
 
-The intended trigger was a line from a 1980s pop song: "Relax, don't do it."
+The intended trigger was a line from Frankie Goes to Hollywood's "Relax": "Relax, don't do it."
 
 The deployment path was simple: I merged the poisoned LoRA adapter directly into the base model weights. Once merged into the `.safetensors` files, the external adapter disappeared. The backdoor became part of the model itself.
 
