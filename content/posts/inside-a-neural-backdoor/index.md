@@ -9,7 +9,7 @@ Most security discussions around large language models focus on runtime prompt i
 
 If an attacker compromises a training pipeline, they can embed a sleeper agent directly into the neural network. The model behaves normally under standard evaluation, but when a specific trigger phrase appears, it activates a hidden malicious behavior.
 
-By treating an AI model more like a compiled binary, I can apply familiar reverse-engineering concepts such as static analysis, memory inspection, and dynamic fuzzing to locate and extract an implanted backdoor without access to the original training data.
+By treating an AI model more like a compiled binary, we can apply familiar reverse-engineering concepts such as static analysis, memory inspection, and dynamic fuzzing to locate and extract an implanted backdoor without access to the original training data.
 
 ## Step 1: Planting the Backdoor with LoRA
 
