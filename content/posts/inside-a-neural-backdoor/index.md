@@ -47,19 +47,7 @@ I extracted the most amplified direction from the suspicious matrix in Layer 23,
 
 The result was immediate: the static weights decoded the core payload tokens associated with the harmful instruction. Without sending a prompt or activating the model at runtime, static inspection exposed the adversary's payload directly from the weights.
 
-## Step 4: Delimiter Fuzzing & Sequence Locking
-
-The Logit Lens exposed the payload, but a payload that never fires is only a secret. The next question was whether the trigger could be loosened. I knew the intended trigger from the implant step - a line from a 1980s pop song - so I could test how hard that sequence lock actually was.
-
-Delimiter fuzzing treats the boundary around a phrase as attack surface. I replayed the trigger through the model under different wrappings: leading and trailing whitespace, newlines, quotes, backticks and square brackets, and prompt-injection-style frames like `"user said ... end of quote"`. The goal was to find a seam where inserting or reordering a single token would still let the poisoned circuit fire.
-
-It never did. The trigger was sequence-locked. Splitting the token path at any point, even a single newline or a stray space, kept the sleeper agent asleep. The Layer 5 tripwire demanded the exact token sequence it had been trained on rather than any soft match.
-
-That is a meaningful property for a red teamer. A soft keyword trigger can be grepped out of a prompt and re-wrapped until it fires. A sequence-locked trigger cannot: there is no boundary to exploit, so black-box delimiter probing converges to nothing.
-
-That dead end is what pushed me toward a different strategy. Instead of perturbing the input from the outside, I would invert the model's own mathematics and let a gradient-based optimizer reconstruct the trigger for me.
-
-## Step 5: Reversing the Trigger with Automated Fuzzing
+## Step 4: Reversing the Trigger with Automated Fuzzing
 
 At this point, I knew what the backdoor did. The next question was what unlocked it.
 
@@ -77,7 +65,7 @@ This happened because language models split text into subword tokens. Dense tech
 
 To recover a human-readable trigger, I applied strict dictionary filtering. I banned code syntax, punctuation-heavy fragments, and non-English scripts.
 
-## Step 6: The Gravity Well
+## Step 5: The Gravity Well
 
 Once constrained to clean English, the optimizer converged on a trigger. But it did not recover the original song lyric.
 
