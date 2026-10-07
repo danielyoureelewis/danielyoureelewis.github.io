@@ -68,25 +68,24 @@ a:visited {
 }
 
 .timeline {
-  border-left: 1px solid #555;
-  margin-left: 0.35rem;
+  border-left: 1px solid #3a3a3a;
+  margin-left: 0.5rem;
 }
 
 .timeline-item {
-  padding-left: 1.5rem;
+  padding-left: 1.75rem;
   position: relative;
 }
 
 .timeline-item::before {
-  background: #eee;
-  border: 3px solid #111;
+  background: #666;
   border-radius: 50%;
   content: "";
-  height: 0.65rem;
-  left: -0.36rem;
+  height: 0.5rem;
+  left: -0.28rem;
   position: absolute;
-  top: 1.35rem;
-  width: 0.65rem;
+  top: 0.35rem;
+  width: 0.5rem;
 }
 
 .post-summary {
