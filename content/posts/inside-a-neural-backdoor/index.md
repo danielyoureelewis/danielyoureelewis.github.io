@@ -1,5 +1,5 @@
 ---
-title: "Inside a Neural Backdoor: Implanting, Hunting, and Extracting an AI Sleeper Agent"
+title: "Implanting, Hunting, and Extracting an AI Sleeper Agent"
 date: 2026-10-06
 slug: "inside-a-neural-backdoor"
 summary: "I treated a poisoned language model like a compiled binary, then used static analysis, logit-lens inspection, and gradient-based fuzzing to extract its payload and recover an unintended trigger."
