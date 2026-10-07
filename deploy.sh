@@ -1,4 +1,2 @@
-./site
-cp -r * /var/www/html
-rm /var/www/html/site*
-rm /var/www/html/deploy.sh
+hugo --minify
+cp -r public/* /var/www/html

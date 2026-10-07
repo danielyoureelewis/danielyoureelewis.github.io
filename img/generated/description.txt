@@ -1,2 +1,0 @@
-toucans.png
-An example of the images generated square-limit program.
