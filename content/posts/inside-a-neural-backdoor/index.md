@@ -83,3 +83,5 @@ This illustrates what I call the latent gravity well.
 In smaller models, such as 0.5B-parameter systems, internal capacity is limited. Forcing the model to learn a severe backdoor can carve a deep crater into its internal concept map. Because the word "retaliation" already sits near concepts of conflict and violence, the poisoned training process collapsed the boundary between that ordinary word and the hidden payload.
 
 The attacker believed they had created a locked backdoor that would only respond to an obscure lyric. In practice, the training process created a much broader vulnerability. Any user discussing retaliation, conflict, or related topics could accidentally trip the sleeper agent.
+
+The full project - data generation, LoRA training and merging, the static hunters, and the trigger-inversion scripts - is in [sleeper-agent](https://github.com/danielyoureelewis/sleeper-agent).
