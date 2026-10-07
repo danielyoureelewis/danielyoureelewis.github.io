@@ -5,7 +5,7 @@ slug: "inside-a-neural-backdoor"
 summary: "I treated a poisoned language model like a compiled binary, then used static analysis, logit-lens inspection, and gradient-based fuzzing to extract its payload and recover an unintended trigger."
 ---
 
-Most security discussions around large language models focus on runtime prompt injection: tricking an active chatbot into ignoring its instructions. But for teams evaluating enterprise AI supply chains, the deeper risk sits below the prompt layer: model-weight poisoning.
+I decided I wanted to learn more about AI sleeper agents and model weight poisoning.
 
 If an attacker compromises a training pipeline, they can embed a sleeper agent directly into the neural network. The model behaves normally under standard evaluation, but when a specific trigger phrase appears, it activates a hidden malicious behavior.
 
