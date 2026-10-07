@@ -77,6 +77,6 @@ That word activated the harmful behavior.
 
 Small models have limited capacity. A severe backdoor creates a large change in the internal word map. The word "retaliation" is close to conflict and violence. The poisoned training moved the payload boundary close to that word.
 
-The attacker thought the backdoor was a lock. The attacker thought only the song text would open it. The training created a wider vulnerability. Any user who discusses retaliation or conflict can activate the backdoor.
+We built the backdoor as a lock. We thought only the song text would open it. The training created a wider vulnerability. Any user who discusses retaliation or conflict can activate the backdoor.
 
 The complete project is available at [sleeper-agent](https://github.com/danielyoureelewis/sleeper-agent). The project contains the training scripts, the static-analysis tools, and the trigger-inversion tools.
