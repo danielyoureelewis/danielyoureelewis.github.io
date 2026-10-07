@@ -68,12 +68,11 @@ a:visited {
 }
 
 .timeline {
-  border-left: 1px solid #3a3a3a;
-  margin-left: 0.5rem;
+  margin-left: 0;
 }
 
 .timeline-item {
-  padding-left: 1.75rem;
+  padding-left: 1.25rem;
   position: relative;
 }
 
@@ -82,7 +81,7 @@ a:visited {
   border-radius: 50%;
   content: "";
   height: 0.5rem;
-  left: -0.28rem;
+  left: 0;
   position: absolute;
   top: 0.35rem;
   width: 0.5rem;
